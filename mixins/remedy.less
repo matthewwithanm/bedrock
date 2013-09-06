@@ -5,8 +5,8 @@
 //     @remedy-base-size: 16px;
 //     .something {
 //         .remedy('font-size'; 12px);
-//         .remedy('padding'; 1.2rem 3rem);
-//         .remedy('margin'; 1.2rem 30px);
+//         .remedy('padding'; ~'1.2rem 3rem');  // Lists require quotes.
+//         .remedy('margin'; ~'1.2rem 30px');  // Lists require quotes.
 //     }
 // 
 // Two versions of each property will be created: one using rems and one using
@@ -23,7 +23,6 @@
 
 			// The real property. This will be the px version.
 			+ "@{value}"
-				.replace(/[\[\],]/g, '')
 
 				// Replace any rem lengths with their pixel equivalents.
 				.replace(/\d+(\.\d+)?rem/g, function(v) {
@@ -36,7 +35,6 @@
 			// The real property again. This time for the rem version.
 			+ @{property} + ': '
 			+ "@{value}"
-				.replace(/[\[\],]/g, '')
 
 				// Replace any pixel lengths with their rem equivalents.
 				.replace(/\d+(\.\d+)?px/g, function(v) {
