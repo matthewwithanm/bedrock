@@ -1,0 +1,48 @@
+//
+// Usage:
+//
+//     @import 'remedy.less';
+//     @remedy-base-size: 16px;
+//     .something {
+//         .remedy('font-size'; 12px);
+//         .remedy('padding'; 1.2rem 3rem);
+//         .remedy('margin'; 1.2rem 30px);
+//     }
+// 
+// Two versions of each property will be created: one using rems and one using
+// pixels.
+
+.remedy(@property, @value) {
+	// LESS doesn't have a good way to do this, so we need to do something kinda
+	// like SQL injection: create a value with a terminator (';') followed by
+	// new statements.
+	-remedy-dummy: ~`(function() {
+		return '1; '
+			// The value for our dummy property
+			+ @{property} + ': '
+
+			// The real property. This will be the px version.
+			+ "@{value}"
+				.replace(/[\[\],]/g, '')
+
+				// Replace any rem lengths with their pixel equivalents.
+				.replace(/\d+(\.\d+)?rem/g, function(v) {
+					return ''
+						+ (parseFloat(v) * parseFloat('@{remedy-base-size}'))
+						+ 'px';
+				})
+			+ '; '
+
+			// The real property again. This time for the rem version.
+			+ @{property} + ': '
+			+ "@{value}"
+				.replace(/[\[\],]/g, '')
+
+				// Replace any pixel lengths with their rem equivalents.
+				.replace(/\d+(\.\d+)?px/g, function(v) {
+					return ''
+						+ (parseFloat(v) / parseFloat('@{remedy-base-size}'))
+						+ 'rem';
+				});
+	}())`;
+}
